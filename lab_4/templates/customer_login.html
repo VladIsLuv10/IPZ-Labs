@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block title %}Вхід | HookMe{% endblock %}{% block content %}
+<section class="max-w-lg mx-auto px-4 py-12"><h1 class="text-3xl font-bold text-[#183d32] mb-6">Вхід клієнта</h1>
+{% with notices = get_flashed_messages(with_categories=true) %}{% for category,notice in notices %}<p class="bg-amber-50 p-4 rounded mb-4">{{ notice }}</p>{% endfor %}{% endwith %}
+{% if error %}<p class="bg-red-100 text-red-700 p-4 rounded mb-4">{{ error }}</p>{% endif %}
+<form method="POST" class="bg-white rounded-xl shadow p-7 space-y-4">
+<label class="block">Email<input type="email" name="email" required class="w-full border rounded p-3 mt-1"></label>
+<label class="block">Пароль<input type="password" name="password" required class="w-full border rounded p-3 mt-1"></label>
+<button class="bg-[#183d32] text-white px-6 py-3 rounded-lg">Увійти</button>
+<p>Немає акаунта? <a class="underline text-[#183d32]" href="{{ url_for('customer_register') }}">Зареєструватися</a></p>
+</form></section>{% endblock %}

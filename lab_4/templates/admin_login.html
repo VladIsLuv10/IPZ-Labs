@@ -1,0 +1,70 @@
+
+{% extends "base.html" %}
+
+{% block title %}Вхід адміністратора | HookMe{% endblock %}
+
+{% block content %}
+<section class="max-w-md mx-auto px-4 py-16">
+
+    <div class="bg-white rounded-2xl shadow p-8">
+
+        <h1 class="text-3xl font-bold text-[#183d32] mb-3">
+            Вхід адміністратора
+        </h1>
+
+        <p class="text-gray-600 mb-8">
+            Панель керування HookMe
+        </p>
+
+        {% if error %}
+        <div class="bg-red-100 text-red-800 p-4 rounded-lg mb-5">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('admin_login') }}"
+              class="space-y-5">
+
+            <div>
+                <label class="block mb-2 font-medium" for="username">
+                    Логін
+                </label>
+
+                <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    required
+                    autocomplete="username"
+                    class="w-full border border-gray-300 rounded-lg p-3"
+                    placeholder="Введіть логін"
+                >
+            </div>
+
+            <div>
+                <label class="block mb-2 font-medium" for="password">
+                    Пароль
+                </label>
+
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    autocomplete="current-password"
+                    class="w-full border border-gray-300 rounded-lg p-3"
+                    placeholder="Введіть пароль"
+                >
+            </div>
+
+            <button
+                type="submit"
+                class="w-full bg-[#183d32] text-white py-3 rounded-lg hover:bg-[#285747] transition font-semibold">
+                Увійти
+            </button>
+
+        </form>
+    </div>
+
+</section>
+{% endblock %}
