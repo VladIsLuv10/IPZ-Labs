@@ -1,0 +1,20 @@
+{
+    "training_count": 10,
+    "total_calories": 2580.0,
+    "median_calories": 245.0,
+    "volume_by_exercise": {
+        "Жим лежачи": 6720.0,
+        "Біг": 0.0,
+        "Присідання": 7110.0,
+        "Підтягування": 0.0
+    },
+    "most_intense_day": "2026-10-07",
+    "running_statistics": {
+        "count": 4,
+        "distance": 22.0,
+        "duration": 140.0,
+        "calories": 1400.0,
+        "pace": 6.363636363636363,
+        "speed": 9.43
+    }
+}
