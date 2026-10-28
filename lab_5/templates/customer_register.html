@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block title %}Реєстрація | HookMe{% endblock %}{% block content %}
+<section class="max-w-lg mx-auto px-4 py-12"><h1 class="text-3xl font-bold text-[#183d32] mb-6">Реєстрація клієнта</h1>
+{% if error %}<p class="bg-red-100 text-red-700 p-4 rounded mb-4">{{ error }}</p>{% endif %}
+<form method="POST" class="bg-white rounded-xl shadow p-7 space-y-4">
+<label class="block">Ім'я<input name="name" required maxlength="100" value="{{ request.form.get('name','') }}" class="w-full border rounded p-3 mt-1"></label>
+<label class="block">Email<input type="email" name="email" required maxlength="254" value="{{ request.form.get('email','') }}" class="w-full border rounded p-3 mt-1"></label>
+<label class="block">Пароль (мінімум 8 символів)<input type="password" name="password" required minlength="8" class="w-full border rounded p-3 mt-1"></label>
+<button class="bg-[#183d32] text-white px-6 py-3 rounded-lg">Зареєструватися</button>
+<p>Уже маєте акаунт? <a class="underline text-[#183d32]" href="{{ url_for('customer_login') }}">Увійти</a></p>
+</form></section>{% endblock %}

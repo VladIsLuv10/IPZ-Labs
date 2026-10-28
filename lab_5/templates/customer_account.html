@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block title %}Мої замовлення | HookMe{% endblock %}{% block content %}
+<section class="max-w-5xl mx-auto px-4 py-12">
+<div class="flex flex-wrap justify-between gap-4 mb-8"><div><h1 class="text-3xl font-bold text-[#183d32]">Особистий кабінет</h1><p class="text-gray-600 mt-2">{{ customer.name }} · {{ customer.email }}</p></div><form method="POST" action="{{ url_for('customer_logout') }}"><button class="bg-[#183d32] text-white px-5 py-3 rounded-lg">Вийти</button></form></div>
+<h2 class="text-2xl font-bold text-[#183d32] mb-5">Історія замовлень</h2>
+{% for order in orders %}<article class="bg-white rounded-xl shadow p-6 mb-5"><div class="flex flex-wrap justify-between gap-2 mb-3"><h3 class="font-bold text-[#183d32]">Замовлення №{{ order.id }}</h3><span>{{ order.status }} · {{ order.created_at }}</span></div>
+{% for item in order['items'] %}<p class="text-gray-700 py-1">{{ item.product_name }} — {{ item.quantity }} × {{ item.price }} грн</p>{% endfor %}
+{% if order.discount %}<p class="text-green-700 mt-3">Знижка: −{{ order.discount }} грн ({{ order.promo_code }})</p>{% endif %}
+<p class="font-bold text-[#183d32] mt-3">Разом: {{ order.total }} грн</p></article>
+{% else %}<p class="bg-white p-6 rounded-xl shadow text-gray-600">Ви ще не оформлювали замовлень.</p>{% endfor %}
+</section>{% endblock %}

@@ -1,0 +1,268 @@
+
+{% extends "base.html" %}
+
+{% block title %}Кошик | HookMe{% endblock %}
+
+{% block content %}
+
+<section class="bg-[#f7f7f2] min-h-[65vh] py-10">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <!-- Заголовок -->
+        <div class="mb-8">
+
+            <p class="text-[#c4943c] uppercase
+                      tracking-widest text-xs font-bold mb-2">
+                HookMe / Кошик
+            </p>
+
+            <h1 class="text-3xl md:text-4xl
+                       font-extrabold text-[#102b24]">
+                🛒 Мій кошик
+            </h1>
+
+        </div>
+
+        {% if cart_items %}
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-7">
+
+            <!-- Список товарів -->
+            <div class="lg:col-span-2 space-y-4">
+
+                {% for item in cart_items %}
+
+                <div class="bg-white rounded-xl shadow-sm
+                            border border-gray-100 p-5">
+
+                    <div class="flex flex-col sm:flex-row gap-5">
+
+                        <!-- Зображення товару -->
+                        <img
+                            src="{{ url_for('static', filename='images/' + item.product.image) }}"
+                            alt="{{ item.product.name }}"
+                            class="w-full sm:w-32 h-32
+                                   object-cover rounded-lg"
+                        >
+
+                        <!-- Інформація про товар -->
+                        <div class="flex-1">
+
+                            <p class="text-xs text-[#b78a35]
+                                      uppercase font-semibold mb-2">
+                                {{ item.product.category }}
+                            </p>
+
+                            <h2 class="text-lg font-bold
+                                       text-[#183d32] mb-2">
+                                {{ item.product.name }}
+                            </h2>
+
+                            <p class="text-gray-500 text-sm">
+                                {{ item.product.price }} грн / шт.
+                            </p>
+
+                            <!-- Кількість товару -->
+                            <div class="flex flex-wrap items-center
+                                        justify-between gap-4 mt-5">
+
+                                <div class="flex items-center gap-3">
+
+                                    <!-- Зменшити кількість -->
+                                    <form
+                                        action="{{ url_for('update_cart', product_id=item.product.id) }}"
+                                        method="POST">
+
+                                        <input
+                                            type="hidden"
+                                            name="action"
+                                            value="decrease"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            aria-label="Зменшити кількість"
+                                            class="w-9 h-9 bg-gray-100
+                                                   rounded-lg font-bold
+                                                   hover:bg-gray-200 transition">
+                                            −
+                                        </button>
+
+                                    </form>
+
+                                    <span class="font-bold">
+                                        {{ item.quantity }}
+                                    </span>
+
+                                    <!-- Збільшити кількість -->
+                                    <form
+                                        action="{{ url_for('update_cart', product_id=item.product.id) }}"
+                                        method="POST">
+
+                                        <input
+                                            type="hidden"
+                                            name="action"
+                                            value="increase"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            aria-label="Збільшити кількість"
+                                            class="w-9 h-9 bg-gray-100
+                                                   rounded-lg font-bold
+                                                   hover:bg-gray-200 transition">
+                                            +
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                                <!-- Сума за товар -->
+                                <p class="text-xl font-extrabold
+                                          text-[#183d32]">
+                                    {{ item.subtotal }} грн
+                                </p>
+
+                            </div>
+
+                            <!-- Видалити товар -->
+                            <form
+                                action="{{ url_for('remove_from_cart', product_id=item.product.id) }}"
+                                method="POST"
+                                class="mt-4">
+
+                                <button
+                                    type="submit"
+                                    class="text-red-600 text-sm
+                                           hover:underline">
+                                    Видалити товар
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+                <!-- Очистити кошик -->
+                <form
+                    action="{{ url_for('clear_cart') }}"
+                    method="POST">
+
+                    <button
+                        type="submit"
+                        class="text-red-600 text-sm
+                               hover:underline">
+                        Очистити кошик
+                    </button>
+
+                </form>
+
+            </div>
+
+            <!-- Підсумок замовлення -->
+            <div class="lg:col-span-1">
+
+                <div class="bg-white rounded-xl shadow-sm
+                            border border-gray-100 p-6
+                            lg:sticky lg:top-6">
+
+                    <h2 class="text-xl font-bold
+                               text-[#183d32] mb-6">
+                        Ваше замовлення
+                    </h2>
+
+                    <!-- Загальна кількість -->
+                    <div class="flex justify-between
+                                text-gray-600 mb-4">
+
+                        <span>Кількість товарів:</span>
+
+                        <span>
+                            {{ cart_items | sum(attribute='quantity') }}
+                        </span>
+
+                    </div>
+
+                    <!-- Загальна сума -->
+                    <div class="border-t border-gray-200 pt-5
+                                flex justify-between items-center">
+
+                        <span class="font-bold text-lg">
+                            Разом:
+                        </span>
+
+                        <span class="text-2xl font-extrabold
+                                     text-[#183d32]">
+                            {{ total }} грн
+                        </span>
+
+                    </div>
+
+                    <!-- Оформити замовлення -->
+                    <a
+                        href="{{ url_for('checkout') }}"
+                        class="block w-full mt-7
+                               bg-[#183d32] text-white
+                               py-4 rounded-xl font-bold
+                               text-center hover:bg-[#285747]
+                               transition">
+                        Оформити замовлення →
+                    </a>
+
+                    <!-- Продовжити покупки -->
+                    <a
+                        href="{{ url_for('catalog') }}"
+                        class="block text-center mt-5
+                               text-[#183d32] font-semibold
+                               hover:underline">
+                        ← Продовжити покупки
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% else %}
+
+        <!-- Порожній кошик -->
+        <div class="bg-white rounded-2xl shadow-sm
+                    p-12 text-center">
+
+            <div class="text-6xl mb-5">🎣</div>
+
+            <h2 class="text-2xl font-bold
+                       text-[#183d32] mb-3">
+                Ваш кошик порожній
+            </h2>
+
+            <p class="text-gray-500 mb-7">
+                Схоже, ви ще не додали жодного товару.
+            </p>
+
+            <a
+                href="{{ url_for('catalog') }}"
+                class="inline-block bg-[#183d32]
+                       text-white px-8 py-3
+                       rounded-xl font-bold
+                       hover:bg-[#285747] transition">
+                Перейти до каталогу →
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,273 @@
+
+{% extends "base.html" %}
+
+{% block title %}Каталог товарів | HookMe{% endblock %}
+
+{% block content %}
+
+<section class="bg-[#f7f7f2] min-h-screen py-10">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <!-- Заголовок -->
+        <div class="mb-8">
+            <p class="text-[#c4943c] uppercase tracking-widest
+                      text-xs font-bold mb-2">
+                HookMe / Каталог
+            </p>
+
+            <h1 class="text-3xl md:text-4xl font-extrabold
+                       text-[#102b24]">
+                Каталог товарів
+            </h1>
+
+            <p class="text-gray-600 mt-2">
+                Знайди спорядження для своєї наступної риболовлі.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-7">
+
+            <!-- Панель фільтрів -->
+            <aside class="lg:col-span-1">
+
+                <form action="{{ url_for('catalog') }}"
+                      method="GET"
+                      class="bg-white rounded-xl shadow-sm
+                             border border-gray-100 p-5 space-y-6">
+
+                    <!-- Пошук -->
+                    <div>
+                        <h2 class="text-xl font-bold
+                                   text-[#183d32] mb-4">
+                            Фільтри
+                        </h2>
+
+                        <label for="search"
+                               class="block text-sm font-semibold mb-2">
+                            Пошук товарів
+                        </label>
+
+                        <input
+                            type="search"
+                            id="search"
+                            name="search"
+                            value="{{ search }}"
+                            placeholder="Назва товару..."
+                            class="w-full border border-gray-300
+                                   rounded-lg px-4 py-3
+                                   focus:outline-none
+                                   focus:border-[#183d32]"
+                        >
+                    </div>
+
+                    <!-- Категорії -->
+                    <div>
+                        <label for="category"
+                               class="block text-sm font-semibold mb-2">
+                            Категорія
+                        </label>
+
+                        <select name="category"
+                                id="category"
+                                class="w-full border border-gray-300
+                                       rounded-lg px-4 py-3 bg-white">
+
+                            <option value="">
+                                Усі категорії
+                            </option>
+
+                            {% for category in categories %}
+
+                            <option value="{{ category }}"
+                                {% if selected_category == category %}
+                                    selected
+                                {% endif %}>
+                                {{ category }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+                    <!-- Сортування -->
+                    <div>
+                        <label for="sort"
+                               class="block text-sm font-semibold mb-2">
+                            Сортування
+                        </label>
+
+                        <select name="sort"
+                                id="sort"
+                                class="w-full border border-gray-300
+                                       rounded-lg px-4 py-3 bg-white">
+
+                            <option value="">
+                                За замовчуванням
+                            </option>
+
+                            <option value="price_asc"
+                                {% if sort == 'price_asc' %}
+                                    selected
+                                {% endif %}>
+                                Від дешевих до дорогих
+                            </option>
+
+                            <option value="price_desc"
+                                {% if sort == 'price_desc' %}
+                                    selected
+                                {% endif %}>
+                                Від дорогих до дешевих
+                            </option>
+
+                        </select>
+                    </div>
+
+                    <!-- Застосувати фільтри -->
+                    <button type="submit"
+                            class="w-full bg-[#183d32] text-white
+                                   font-bold py-3 rounded-lg
+                                   hover:bg-[#285747] transition">
+                        Застосувати
+                    </button>
+
+                    <!-- Скинути фільтри -->
+                    <a href="{{ url_for('catalog') }}"
+                       class="block text-center text-sm
+                              text-gray-500 hover:text-[#183d32]">
+                        Скинути фільтри
+                    </a>
+
+                </form>
+            </aside>
+
+            <!-- Товари -->
+            <div class="lg:col-span-3">
+
+                <div class="flex justify-between items-center mb-5">
+
+                    <h2 class="text-xl font-bold text-[#183d32]">
+                        Наші товари
+                    </h2>
+
+                    <span class="text-gray-500 text-sm">
+                        Знайдено: {{ products|length }}
+                    </span>
+
+                </div>
+
+                <!-- Сітка товарів -->
+                <div class="grid grid-cols-1 sm:grid-cols-2
+                            xl:grid-cols-3 gap-5">
+
+                    {% for product in products %}
+
+                    <article class="bg-white rounded-xl overflow-hidden
+                                    border border-gray-100 shadow-sm
+                                    hover:shadow-lg transition duration-300">
+
+                        <!-- Фото товару -->
+                        <div class="h-48 bg-[#e8eee8] overflow-hidden">
+
+                            <img
+                                src="{{ url_for('static', filename='images/' + product.image) }}"
+                                alt="{{ product.name }}"
+                                class="w-full h-full object-cover
+                                       hover:scale-105 transition duration-500"
+                                loading="lazy"
+                            >
+
+                        </div>
+
+                        <!-- Інформація про товар -->
+                        <div class="p-5">
+
+                            <!-- Категорія -->
+                            <p class="text-xs text-[#b78a35]
+                                      uppercase font-semibold mb-2">
+                                {{ product.category }}
+                            </p>
+
+                            <!-- Назва -->
+                            <h3 class="text-lg font-bold
+                                       text-[#183d32] mb-2">
+                                {{ product.name }}
+                            </h3>
+
+                            <!-- Опис -->
+                            <p class="text-sm text-gray-500 mb-4 min-h-10">
+                                {{ product.description }}
+                            </p>
+
+                            <!-- Ціна та додавання до кошика -->
+                            <div class="border-t border-gray-100 pt-4">
+
+                                <p class="text-2xl font-extrabold
+                                          text-[#183d32] mb-4">
+                                    {{ product.price }} грн
+                                </p>
+
+                                <!-- Активна кнопка -->
+                                <form
+                                    action="{{ url_for('add_to_cart', product_id=product.id) }}"
+                                    method="POST">
+
+                                    <button
+                                        type="submit"
+                                        class="w-full bg-[#183d32]
+                                               text-white py-3 rounded-lg
+                                               font-semibold
+                                               hover:bg-[#285747]
+                                               transition
+                                               cursor-pointer">
+                                        🛒 Додати в кошик
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                    {% else %}
+
+                    <!-- Якщо товарів немає -->
+                    <div class="col-span-full bg-white rounded-xl
+                                p-12 text-center">
+
+                        <div class="text-5xl mb-4">
+                            🎣
+                        </div>
+
+                        <h3 class="text-xl font-bold
+                                   text-[#183d32] mb-2">
+                            Товарів не знайдено
+                        </h3>
+
+                        <p class="text-gray-500 mb-5">
+                            Спробуй змінити параметри пошуку.
+                        </p>
+
+                        <a href="{{ url_for('catalog') }}"
+                           class="text-[#183d32] font-bold underline">
+                            Показати всі товари
+                        </a>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
