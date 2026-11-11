@@ -1,0 +1,225 @@
+
+{% extends "base.html" %}
+
+{% block title %}API Manager | HookMe{% endblock %}
+
+{% block content %}
+
+<div class="min-h-screen bg-[#f7f7f2] py-10 px-4">
+    <div class="max-w-7xl mx-auto">
+
+        <!-- ЗАГОЛОВОК -->
+        <div class="mb-8">
+            <div class="flex flex-wrap justify-between items-center gap-4">
+                <div>
+                    <p class="text-[#b88928] font-bold text-sm uppercase tracking-widest mb-2">
+                        Лабораторна робота №6
+                    </p>
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-[#002b23]">
+                        HookMe API Manager
+                    </h1>
+                    <p class="text-gray-600 mt-3">
+                        Керування товарами через REST API, JavaScript та Fetch.
+                    </p>
+                </div>
+
+                <a href="{{ url_for('admin') }}"
+                   class="bg-[#002b23] text-white px-5 py-3 rounded-xl hover:bg-[#075443] transition">
+                    ← Адмін-панель
+                </a>
+            </div>
+        </div>
+
+        <!-- ПОВІДОМЛЕННЯ -->
+        <div id="notification"
+             role="status"
+             aria-live="polite"
+             class="hidden mb-6 rounded-xl px-5 py-4 font-medium">
+        </div>
+
+        <!-- ОСНОВНИЙ КОНТЕНТ -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+
+            <!-- ФОРМА ТОВАРУ -->
+            <section class="lg:col-span-1 bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-11 h-11 rounded-xl bg-[#e6f2ec] flex items-center justify-center text-2xl">
+                        🎣
+                    </div>
+                    <div>
+                        <h2 id="form-title" class="text-xl font-bold text-[#002b23]">
+                            Додати товар
+                        </h2>
+                        <p class="text-sm text-gray-500">
+                            Заповніть інформацію про товар
+                        </p>
+                    </div>
+                </div>
+
+                <form id="product-form" class="space-y-5">
+
+                    <input type="hidden" id="product-id">
+
+                    <!-- НАЗВА -->
+                    <div>
+                        <label for="name" class="block text-sm font-semibold mb-2">
+                            Назва товару
+                        </label>
+                        <input type="text"
+                               id="name"
+                               required
+                               maxlength="200"
+                               placeholder="Наприклад: Спінінг HookMe PRO"
+                               class="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-[#008c68] focus:ring-2 focus:ring-emerald-100">
+                    </div>
+
+                    <!-- КАТЕГОРІЯ -->
+                    <div>
+                        <label for="category" class="block text-sm font-semibold mb-2">
+                            Категорія
+                        </label>
+                        <select id="category"
+                                required
+                                class="w-full border border-gray-300 bg-white rounded-xl px-4 py-3 outline-none focus:border-[#008c68]">
+                            <option value="">Оберіть категорію</option>
+                            <option value="Вудилища">Вудилища</option>
+                            <option value="Котушки">Котушки</option>
+                            <option value="Приманки">Приманки</option>
+                            <option value="Гачки">Гачки</option>
+                            <option value="Аксесуари">Аксесуари</option>
+                        </select>
+                    </div>
+
+                    <!-- ЦІНА -->
+                    <div>
+                        <label for="price" class="block text-sm font-semibold mb-2">
+                            Ціна (грн)
+                        </label>
+                        <input type="number"
+                               id="price"
+                               min="0"
+                               step="1"
+                               required
+                               placeholder="1500"
+                               class="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-[#008c68]">
+                    </div>
+
+                    <!-- ЗОБРАЖЕННЯ -->
+                    <div>
+                        <label for="image" class="block text-sm font-semibold mb-2">
+                            Файл зображення
+                        </label>
+                        <input type="text"
+                               id="image"
+                               maxlength="255"
+                               required
+                               placeholder="rods.jpg"
+                               class="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-[#008c68]">
+                        <p class="text-xs text-gray-500 mt-2">
+                            Вкажіть назву файлу із папки static/images.
+                        </p>
+                    </div>
+
+                    <!-- ОПИС -->
+                    <div>
+                        <label for="description" class="block text-sm font-semibold mb-2">
+                            Опис товару
+                        </label>
+                        <textarea id="description"
+                                  rows="4"
+                                  maxlength="3000"
+                                  required
+                                  placeholder="Короткий опис товару..."
+                                  class="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-[#008c68]"></textarea>
+                    </div>
+
+                    <!-- КНОПКИ -->
+                    <button type="submit"
+                            id="submit-button"
+                            class="w-full bg-[#f0be55] text-[#002b23] font-bold py-3 rounded-xl hover:bg-[#e5ac37] disabled:opacity-50 transition">
+                        Додати товар
+                    </button>
+
+                    <button type="button"
+                            id="cancel-button"
+                            class="hidden w-full border border-gray-300 py-3 rounded-xl font-semibold hover:bg-gray-100 transition">
+                        Скасувати редагування
+                    </button>
+                </form>
+            </section>
+
+            <!-- СПИСОК ТОВАРІВ -->
+            <section class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+
+                <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-[#002b23]">
+                            Товари магазину
+                        </h2>
+                        <p class="text-sm text-gray-500 mt-1">
+                            Завантаження з REST API без перезавантаження сторінки
+                        </p>
+                    </div>
+
+                    <button type="button"
+                            id="refresh-button"
+                            class="bg-[#002b23] text-white px-5 py-3 rounded-xl hover:bg-[#075443] disabled:opacity-50 transition">
+                        ↻ Оновити
+                    </button>
+                </div>
+
+                <!-- ЛІЧИЛЬНИК -->
+                <div class="bg-[#f2f7f4] border border-[#d8e8de] rounded-xl p-4 mb-5">
+                    <p class="text-sm text-gray-600">
+                        Кількість товарів у базі:
+                        <span id="products-count" class="font-bold text-[#002b23]">0</span>
+                    </p>
+                </div>
+
+                <!-- ЗАВАНТАЖЕННЯ -->
+                <div id="loading" class="hidden text-center py-10">
+                    <div class="w-10 h-10 border-4 border-gray-200 border-t-[#008c68] rounded-full animate-spin mx-auto mb-3"></div>
+                    <p class="text-gray-500">Завантаження товарів...</p>
+                </div>
+
+                <!-- ТОВАРИ -->
+                <div id="products-list" class="space-y-3"></div>
+
+            </section>
+
+        </div>
+
+        <!-- ІНФОРМАЦІЯ ПРО API -->
+        <div class="mt-8 bg-[#002b23] text-white rounded-2xl p-6">
+            <h3 class="text-lg font-bold mb-4">REST API — використані методи</h3>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                <div class="bg-white/10 rounded-xl p-4">
+                    <span class="text-emerald-300 font-bold">GET</span>
+                    <p class="mt-2 text-gray-200">Отримання товарів</p>
+                </div>
+
+                <div class="bg-white/10 rounded-xl p-4">
+                    <span class="text-blue-300 font-bold">POST</span>
+                    <p class="mt-2 text-gray-200">Додавання товару</p>
+                </div>
+
+                <div class="bg-white/10 rounded-xl p-4">
+                    <span class="text-amber-300 font-bold">PUT</span>
+                    <p class="mt-2 text-gray-200">Редагування товару</p>
+                </div>
+
+                <div class="bg-white/10 rounded-xl p-4">
+                    <span class="text-red-300 font-bold">DELETE</span>
+                    <p class="mt-2 text-gray-200">Видалення товару</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/api-demo.js') }}" defer></script>
+
+{% endblock %}

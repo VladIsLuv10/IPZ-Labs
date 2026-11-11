@@ -1,0 +1,308 @@
+
+{% extends "base.html" %}
+
+{% block title %}HookMe — Риболовний магазин{% endblock %}
+
+{% block content %}
+
+<!-- ГОЛОВНИЙ БАНЕР -->
+<section class="relative min-h-[420px] md:min-h-[470px] flex items-center overflow-hidden bg-[#071f1a]">
+
+    <!-- Фонове зображення -->
+    <div class="absolute inset-0">
+        <img
+            src="{{ url_for('static', filename='images/pike-banner.jpg') }}"
+            alt="Щука атакує риболовну приманку"
+            class="w-full h-full object-cover object-center"
+        >
+
+        <!-- Затемнення зліва -->
+        <div class="absolute inset-0 bg-gradient-to-r
+                    from-[#061c17]/95 via-[#061c17]/65
+                    to-transparent"></div>
+    </div>
+
+    <!-- Контент банера -->
+    <div class="relative z-10 max-w-7xl mx-auto px-6 py-10 md:py-14 w-full">
+
+        <div class="max-w-2xl">
+
+            <p class="text-[#e4b85d] font-semibold
+                      tracking-[0.3em] uppercase text-xs sm:text-sm mb-4">
+                Риболовний магазин
+            </p>
+
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl
+                       font-extrabold text-white leading-[1.1] mb-4">
+                Твій улов<br>
+                починається
+                <span class="text-[#e4b85d]">тут.</span>
+            </h1>
+
+            <p class="text-gray-200 text-base sm:text-lg
+                      leading-relaxed max-w-lg mb-6">
+                Вудилища, котушки, приманки та аксесуари
+                для справжніх рибалок.
+            </p>
+
+            <a href="{{ url_for('catalog') }}"
+               class="inline-flex items-center gap-3
+                      bg-[#e4b85d] text-[#102b24]
+                      px-7 py-3 rounded-xl font-bold
+                      hover:bg-[#f3ca75]
+                      hover:-translate-y-1
+                      transition duration-300 shadow-lg">
+                Перейти до каталогу
+                <span aria-hidden="true">→</span>
+            </a>
+
+        </div>
+
+        <!-- Переваги магазину -->
+        <div class="grid grid-cols-2 lg:grid-cols-4
+                    gap-4 mt-8 max-w-5xl">
+
+            <div class="flex items-center gap-3 text-white">
+                <span class="text-2xl">🚚</span>
+                <span class="text-xs sm:text-sm">
+                    Доставка<br>по Україні
+                </span>
+            </div>
+
+            <div class="flex items-center gap-3 text-white">
+                <span class="text-2xl">🛡️</span>
+                <span class="text-xs sm:text-sm">
+                    Якісне<br>спорядження
+                </span>
+            </div>
+
+            <div class="flex items-center gap-3 text-white">
+                <span class="text-2xl">⭐</span>
+                <span class="text-xs sm:text-sm">
+                    Для любителів<br>і професіоналів
+                </span>
+            </div>
+
+            <div class="flex items-center gap-3 text-white">
+                <span class="text-2xl">🎣</span>
+                <span class="text-xs sm:text-sm">
+                    Все для<br>риболовлі
+                </span>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- КАТЕГОРІЇ ТОВАРІВ -->
+<section class="bg-[#f7f7f2] py-8 md:py-10">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <!-- Заголовок секції -->
+        <div class="flex flex-wrap items-end
+                    justify-between gap-4 mb-5">
+
+            <div>
+                <p class="text-[#c4943c] uppercase
+                          tracking-[0.2em] font-bold text-xs sm:text-sm mb-2">
+                    Категорії товарів
+                </p>
+
+                <h2 class="text-2xl md:text-3xl
+                           font-extrabold text-[#102b24]">
+                    Обирай своє спорядження
+                </h2>
+            </div>
+
+            <a href="{{ url_for('catalog') }}"
+               class="font-semibold text-[#183d32]
+                      hover:text-[#c4943c] transition">
+                Весь каталог →
+            </a>
+        </div>
+
+        <!-- Картки категорій -->
+        <div class="grid grid-cols-2 md:grid-cols-3
+                    lg:grid-cols-5 gap-3 md:gap-4">
+
+            {% set categories = [
+                ("Вудилища", "rods.jpg"),
+                ("Котушки", "reels.jpg"),
+                ("Приманки", "lures.jpg"),
+                ("Гачки", "hooks.jpg"),
+                ("Аксесуари", "accessories.jpg")
+            ] %}
+
+            {% for name, image in categories %}
+
+            <a href="{{ url_for('catalog', category=name) }}"
+               class="group relative h-44 md:h-48 rounded-xl
+                      overflow-hidden bg-[#183d32]
+                      shadow-md hover:shadow-xl
+                      transition duration-300">
+
+                <!-- Фотографія -->
+                <img
+                    src="{{ url_for('static', filename='images/' + image) }}"
+                    alt="{{ name }}"
+                    class="w-full h-full object-cover
+                           group-hover:scale-110
+                           transition-transform duration-500"
+                    loading="lazy"
+                >
+
+                <!-- Затемнення нижньої частини -->
+                <div class="absolute inset-0 bg-gradient-to-t
+                            from-[#061c17]/95 via-[#061c17]/20
+                            to-transparent"></div>
+
+                <!-- Назва та стрілка -->
+                <div class="absolute bottom-0 left-0 right-0
+                            p-3 md:p-4 flex justify-between
+                            items-center gap-2">
+
+                    <h3 class="text-white font-bold text-base md:text-lg">
+                        {{ name }}
+                    </h3>
+
+                    <span class="flex items-center justify-center
+                                 w-8 h-8 rounded-full
+                                 bg-[#e4b85d] text-[#102b24]
+                                 font-bold text-lg shrink-0
+                                 group-hover:bg-white
+                                 group-hover:translate-x-1
+                                 transition duration-300">
+                        →
+                    </span>
+
+                </div>
+            </a>
+
+            {% endfor %}
+
+        </div>
+    </div>
+</section>
+
+
+<!-- ПОПУЛЯРНІ ТОВАРИ -->
+<section class="bg-white py-12">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <div class="flex flex-wrap items-end
+                    justify-between gap-4 mb-7">
+
+            <div>
+                <p class="text-[#c4943c] uppercase
+                          tracking-widest text-xs font-bold mb-2">
+                    Вибір рибалок
+                </p>
+
+                <h2 class="text-2xl md:text-3xl
+                           font-extrabold text-[#102b24]">
+                    Популярні товари
+                </h2>
+            </div>
+
+            <a href="{{ url_for('catalog') }}"
+               class="text-[#183d32] font-semibold hover:underline">
+                Переглянути всі →
+            </a>
+        </div>
+
+        {% set products = [
+            ("Спінінгове вудилище", "1 850 грн", "rods.jpg"),
+            ("Безінерційна котушка", "1 290 грн", "reels.jpg"),
+            ("Набір приманок", "320 грн", "lures.jpg")
+        ] %}
+
+        <div class="grid grid-cols-1 sm:grid-cols-2
+                    lg:grid-cols-3 gap-5">
+
+            {% for name, price, image in products %}
+
+            <div class="bg-[#f7f7f2] rounded-xl
+                        overflow-hidden border border-gray-100
+                        hover:shadow-lg transition duration-300">
+
+                <div class="h-44 overflow-hidden">
+                    <img
+                        src="{{ url_for('static', filename='images/' + image) }}"
+                        alt="{{ name }}"
+                        class="w-full h-full object-cover
+                               hover:scale-105 transition duration-500"
+                        loading="lazy"
+                    >
+                </div>
+
+                <div class="p-5">
+
+                    <p class="text-xs uppercase
+                              tracking-wider text-gray-500 mb-2">
+                        Риболовне спорядження
+                    </p>
+
+                    <h3 class="font-bold text-lg text-[#183d32] mb-4">
+                        {{ name }}
+                    </h3>
+
+                    <div class="flex justify-between
+                                items-center gap-3">
+
+                        <span class="font-extrabold text-xl text-[#183d32]">
+                            {{ price }}
+                        </span>
+
+                        <a href="{{ url_for('catalog') }}"
+                           class="bg-[#183d32] text-white
+                                  px-4 py-2 rounded-lg text-sm
+                                  hover:bg-[#285747] transition">
+                            Детальніше
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+
+            {% endfor %}
+        </div>
+
+        <p class="text-xs text-gray-500 mt-4">
+            * Товари та ціни наведено для демонстрації.
+        </p>
+    </div>
+</section>
+
+
+<!-- ЗАКЛИК ДО ДІЇ -->
+<section class="bg-[#183d32] py-10">
+
+    <div class="max-w-7xl mx-auto px-6
+                flex flex-col md:flex-row
+                items-center justify-between gap-6">
+
+        <div>
+            <h2 class="text-2xl md:text-3xl
+                       font-bold text-white mb-2">
+                Готовий до наступної риболовлі?
+            </h2>
+
+            <p class="text-gray-300 text-sm md:text-base">
+                Знайди своє ідеальне спорядження разом із HookMe.
+            </p>
+        </div>
+
+        <a href="{{ url_for('catalog') }}"
+           class="bg-[#e4b85d] text-[#102b24]
+                  px-7 py-3 rounded-xl font-bold
+                  hover:bg-[#f3ca75] transition shrink-0">
+            Обрати спорядження →
+        </a>
+
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,669 @@
+{% extends "base.html" %}
+
+{% block title %}Адмін-панель | HookMe{% endblock %}
+
+{% block content %}
+
+{% with notices = get_flashed_messages(with_categories=true) %}
+    {% if notices %}
+    <div class="max-w-6xl mx-auto px-4 pt-6 space-y-2">
+        {% for category, notice in notices %}
+        <div class="rounded-lg p-4 font-medium {% if category == 'error' %}bg-red-50 text-red-700{% else %}bg-green-50 text-green-700{% endif %}">
+            {{ notice }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endwith %}
+
+
+<section class="max-w-6xl mx-auto px-4 py-12">
+
+    <!-- Заголовок -->
+
+    <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+
+        <div>
+
+            <h1 class="text-3xl font-bold text-[#183d32]">
+
+                Панель адміністратора
+
+            </h1>
+
+            <p class="text-gray-600 mt-2">
+
+                Вітаємо, {{ session.admin_username }}!
+
+            </p>
+
+        </div>
+
+        <!-- Вихід -->
+
+        <form method="POST" action="{{ url_for('admin_logout') }}">
+
+            <button
+
+                type="submit"
+
+                class="bg-[#183d32] text-white px-5 py-3
+
+                       rounded-lg hover:bg-[#285747] transition">
+
+                Вийти
+
+            </button>
+
+        </form>
+
+    </div>
+
+    <!-- Статистика -->
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
+
+        <!-- Усі повідомлення -->
+
+        <div class="bg-white rounded-xl shadow p-6">
+
+            <p class="text-gray-500 mb-2">
+
+                Усього повідомлень
+
+            </p>
+
+            <p class="text-4xl font-bold text-[#183d32]">
+
+                {{ messages|length }}
+
+            </p>
+
+        </div>
+
+        <!-- Непрочитані -->
+
+        <div class="bg-white rounded-xl shadow p-6">
+
+            <p class="text-gray-500 mb-2">
+
+                Непрочитані повідомлення
+
+            </p>
+
+            <p class="text-4xl font-bold text-[#183d32]">
+
+                {{ unread_count }}
+
+            </p>
+
+        </div>
+
+        <!-- Усі замовлення -->
+
+        <div class="bg-white rounded-xl shadow p-6">
+
+            <p class="text-gray-500 mb-2">
+
+                Усього замовлень
+
+            </p>
+
+            <p class="text-4xl font-bold text-[#183d32]">
+
+                {{ orders|length }}
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- ===================================== -->
+
+    <!-- КЕРУВАННЯ ТОВАРАМИ -->
+    <section id="products" class="mb-12">
+        <h2 class="text-2xl font-bold text-[#183d32] mb-5">🛍️ Керування товарами</h2>
+        <div class="bg-white rounded-xl shadow p-6 mb-6">
+            <h3 class="text-xl font-bold text-[#183d32] mb-4">Додати новий товар</h3>
+            <form method="POST" action="{{ url_for('admin_add_product') }}" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input name="name" required maxlength="200" placeholder="Назва товару" class="border rounded-lg p-3">
+                <select name="category" required class="border rounded-lg p-3">
+                    {% for category in ["Вудилища", "Котушки", "Приманки", "Гачки", "Аксесуари"] %}
+                    <option value="{{ category }}">{{ category }}</option>
+                    {% endfor %}
+                </select>
+                <input type="number" name="price" min="0" step="1" required placeholder="Ціна (грн)" class="border rounded-lg p-3">
+                <input name="image" required maxlength="255" placeholder="Назва зображення, наприклад rods.jpg" class="border rounded-lg p-3">
+                <textarea name="description" required maxlength="3000" placeholder="Опис товару" class="border rounded-lg p-3 md:col-span-2"></textarea>
+                <button type="submit" class="bg-[#183d32] text-white px-5 py-3 rounded-lg hover:bg-[#285747] transition">Додати товар</button>
+            </form>
+        </div>
+        <div class="space-y-4">
+            {% for product in products %}
+            <div class="bg-white rounded-xl shadow p-6">
+                <h3 class="font-bold text-[#183d32] mb-4">№{{ product.id }} — {{ product.name }}</h3>
+                <form method="POST" action="{{ url_for('admin_edit_product', product_id=product.id) }}" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input name="name" value="{{ product.name }}" maxlength="200" required class="border rounded-lg p-3">
+                    <select name="category" class="border rounded-lg p-3">
+                        {% for category in ["Вудилища", "Котушки", "Приманки", "Гачки", "Аксесуари"] %}
+                        <option value="{{ category }}" {% if product.category == category %}selected{% endif %}>{{ category }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="number" name="price" min="0" step="1" required value="{{ product.price }}" class="border rounded-lg p-3">
+                    <input name="image" value="{{ product.image }}" maxlength="255" required class="border rounded-lg p-3">
+                    <textarea name="description" required maxlength="3000" class="border rounded-lg p-3 md:col-span-2">{{ product.description }}</textarea>
+                    <button type="submit" class="bg-[#183d32] text-white px-5 py-3 rounded-lg hover:bg-[#285747] transition">Зберегти зміни</button>
+                </form>
+                <form method="POST" action="{{ url_for('admin_delete_product', product_id=product.id) }}" onsubmit="return confirm('Видалити цей товар?')" class="mt-3">
+                    <button type="submit" class="bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700 transition">Видалити товар</button>
+                </form>
+            </div>
+            {% else %}
+            <div class="bg-white rounded-xl shadow p-6 text-gray-500">Товарів поки немає.</div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- ЗАМОВЛЕННЯ ПОКУПЦІВ -->
+
+    <!-- ===================================== -->
+
+    <h2 class="text-2xl font-bold text-[#183d32] mb-5">
+
+        📦 Замовлення покупців
+
+    </h2>
+
+    {% if orders %}
+
+    <div class="space-y-5 mb-12">
+
+        {% for order in orders %}
+
+        <div class="bg-white rounded-xl shadow p-6">
+
+            <!-- Номер і статус замовлення -->
+
+            <div class="flex flex-wrap justify-between gap-4 mb-5">
+
+                <div>
+
+                    <h3 class="text-xl font-bold text-[#183d32]">
+
+                        Замовлення №{{ order.id }}
+
+                    </h3>
+
+                    <p class="text-sm text-gray-500 mt-1">
+
+                        {{ order.created_at }}
+
+                    </p>
+
+                </div>
+
+                <div>
+
+                    {% if order.status == "Нове" %}
+
+                    <span class="inline-block bg-amber-100
+
+                                 text-amber-700 px-3 py-1
+
+                                 rounded-lg font-semibold">
+
+                        {{ order.status }}
+
+                    </span>
+
+                    {% elif order.status == "Виконано" %}
+
+                    <span class="inline-block bg-green-100
+
+                                 text-green-700 px-3 py-1
+
+                                 rounded-lg font-semibold">
+
+                        {{ order.status }}
+
+                    </span>
+
+                    {% elif order.status == "Скасовано" %}
+
+                    <span class="inline-block bg-red-100
+
+                                 text-red-700 px-3 py-1
+
+                                 rounded-lg font-semibold">
+
+                        {{ order.status }}
+
+                    </span>
+
+                    {% else %}
+
+                    <span class="inline-block bg-blue-100
+
+                                 text-blue-700 px-3 py-1
+
+                                 rounded-lg font-semibold">
+
+                        {{ order.status }}
+
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            <!-- Дані покупця -->
+
+            <div class="border-t border-gray-100 pt-4 mb-5">
+
+                <h4 class="font-bold text-[#183d32] mb-3">
+
+                    Дані покупця
+
+                </h4>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3
+
+                            text-sm text-gray-700">
+
+                    <p>
+
+                        <span class="font-semibold">Ім'я:</span>
+
+                        {{ order.customer_name }}
+
+                    </p>
+
+                    <p>
+
+                        <span class="font-semibold">Телефон:</span>
+
+                        {{ order.phone }}
+
+                    </p>
+
+                    <p class="break-words">
+
+                        <span class="font-semibold">Email:</span>
+
+                        {{ order.email or "Не вказано" }}
+
+                    </p>
+
+                    <p class="break-words">
+
+                        <span class="font-semibold">Адреса:</span>
+
+                        {{ order.address }}
+
+                    </p>
+
+                </div>
+
+                {% if order.comment %}
+
+                <div class="mt-4">
+
+                    <p class="text-sm text-gray-700 whitespace-pre-wrap break-words"><span class="font-semibold">Коментар:</span> {{ order.comment }}</p>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            <!-- Товари -->
+
+            <div class="border-t border-gray-100 pt-4 mb-5">
+
+                <h4 class="font-bold text-[#183d32] mb-3">
+
+                    Товари в замовленні
+
+                </h4>
+
+                <div class="overflow-x-auto">
+
+                    <table class="w-full text-left text-sm">
+
+                        <thead>
+
+                            <tr class="border-b border-gray-200
+
+                                       text-gray-500">
+
+                                <th class="py-3 pr-4">
+
+                                    Товар
+
+                                </th>
+
+                                <th class="py-3 pr-4">
+
+                                    Кількість
+
+                                </th>
+
+                                <th class="py-3 pr-4">
+
+                                    Ціна
+
+                                </th>
+
+                                <th class="py-3 text-right">
+
+                                    Сума
+
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for item in order["items"] %}
+
+                            <tr class="border-b border-gray-100">
+
+                                <td class="py-3 pr-4 font-semibold
+
+                                           text-[#183d32]">
+
+                                    {{ item.product_name }}
+
+                                </td>
+
+                                <td class="py-3 pr-4">
+
+                                    {{ item.quantity }}
+
+                                </td>
+
+                                <td class="py-3 pr-4">
+
+                                    {{ item.price }} грн
+
+                                </td>
+
+                                <td class="py-3 text-right font-semibold">
+
+                                    {{ item.price * item.quantity }} грн
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <!-- Загальна сума -->
+
+                <div class="flex justify-end mt-5">
+
+                    <p class="text-lg font-bold text-[#183d32]">
+
+                        Разом: {{ order.total }} грн
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- Зміна статусу -->
+
+            <div class="border-t border-gray-100 pt-5">
+
+                <form
+
+                    method="POST"
+
+                    action="{{ url_for('admin_update_order_status', order_id=order.id) }}"
+
+                    class="flex flex-wrap items-end gap-3">
+
+                    <div class="flex-1 min-w-48">
+
+                        <label
+
+                            for="status-{{ order.id }}"
+
+                            class="block text-sm font-semibold
+
+                                   text-gray-700 mb-2">
+
+                            Статус замовлення
+
+                        </label>
+
+                        <select
+
+                            name="status"
+
+                            id="status-{{ order.id }}"
+
+                            class="w-full border border-gray-300
+
+                                   rounded-lg px-4 py-3 bg-white
+
+                                   focus:outline-none
+
+                                   focus:border-[#183d32]">
+
+                            {% for status in order_statuses %}
+
+                            <option
+
+                                value="{{ status }}"
+
+                                {% if order.status == status %}
+
+                                    selected
+
+                                {% endif %}>
+
+                                {{ status }}
+
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <button
+
+                        type="submit"
+
+                        class="bg-[#183d32] text-white
+
+                               px-6 py-3 rounded-lg font-semibold
+
+                               hover:bg-[#285747] transition">
+
+                        Зберегти статус
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="bg-white rounded-xl shadow p-8
+
+                text-center text-gray-500 mb-12">
+
+        Замовлень поки немає.
+
+    </div>
+
+    {% endif %}
+
+    <!-- ===================================== -->
+
+    <!-- ПОВІДОМЛЕННЯ ПОКУПЦІВ -->
+
+    <!-- ===================================== -->
+
+    <h2 class="text-2xl font-bold text-[#183d32] mb-5">
+
+        ✉️ Повідомлення покупців
+
+    </h2>
+
+    {% if messages %}
+
+    <div class="space-y-4">
+
+        {% for message in messages %}
+
+        <div class="bg-white rounded-xl shadow p-6">
+
+            <div class="flex flex-wrap justify-between gap-3 mb-4">
+
+                <div>
+
+                    <h3 class="text-lg font-bold text-[#183d32]">
+
+                        {{ message.name }}
+
+                    </h3>
+
+                    <p class="text-gray-600 break-words">
+
+                        {{ message.email }}
+
+                    </p>
+
+                </div>
+
+                <div class="text-right">
+
+                    {% if message.is_read %}
+
+                    <span class="text-green-700 font-semibold">
+
+                        Прочитано
+
+                    </span>
+
+                    {% else %}
+
+                    <span class="text-amber-600 font-semibold">
+
+                        Нове
+
+                    </span>
+
+                    {% endif %}
+
+                    <p class="text-sm text-gray-500 mt-1">
+
+                        {{ message.created_at }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            <p class="text-gray-700 whitespace-pre-wrap break-words mb-5">{{ message.message }}</p>
+
+           <form method="POST" action="{{ url_for('admin_delete_message', message_id=message.id) }}" onsubmit="return confirm('Видалити повідомлення?')" class="mb-3">
+               <button type="submit" class="bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700 transition">Видалити повідомлення</button>
+           </form>
+
+            {% if not message.is_read %}
+
+            <form
+
+                method="POST"
+
+                action="{{ url_for('admin_mark_read', message_id=message.id) }}">
+
+                <button
+
+                    type="submit"
+
+                    class="bg-[#183d32] text-white px-5 py-2
+
+                           rounded-lg hover:bg-[#285747] transition">
+
+                    Позначити прочитаним
+
+                </button>
+
+            </form>
+
+            {% endif %}
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="bg-white rounded-xl shadow p-8
+
+                text-center text-gray-500">
+
+        Повідомлень поки немає.
+
+    </div>
+
+    {% endif %}
+
+<!-- РІВЕНЬ 2: КЛІЄНТИ -->
+<section id="customers" class="mb-12">
+<h2 class="text-2xl font-bold text-[#183d32] mb-5">👥 Клієнти</h2>
+{% for customer in customers %}
+<div class="bg-white rounded-xl shadow p-6 mb-4">
+<p class="font-bold text-[#183d32] mb-3">№{{ customer.id }} — {{ customer.email }}</p>
+<form method="POST" action="{{ url_for('admin_edit_customer', customer_id=customer.id) }}" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+<label>Ім'я<input name="name" required maxlength="100" value="{{ customer.name }}" class="w-full border rounded-lg p-3"></label>
+<label>Телефон<input name="phone" maxlength="30" value="{{ customer.phone }}" class="w-full border rounded-lg p-3"></label>
+<label>Адреса<input name="address" maxlength="300" value="{{ customer.address }}" class="w-full border rounded-lg p-3"></label>
+<button class="bg-[#183d32] text-white px-5 py-2 rounded-lg">Зберегти клієнта</button>
+</form>
+<form method="POST" action="{{ url_for('admin_delete_customer', customer_id=customer.id) }}" onsubmit="return confirm('Видалити обліковий запис клієнта?')" class="mt-3"><button class="bg-red-600 text-white px-5 py-2 rounded-lg">Видалити клієнта</button></form>
+</div>
+{% else %}<p class="bg-white rounded-xl shadow p-6">Зареєстрованих клієнтів поки немає.</p>{% endfor %}
+</section>
+<!-- РІВЕНЬ 3: ПРОМОКОДИ -->
+<section id="promos" class="mb-12">
+<h2 class="text-2xl font-bold text-[#183d32] mb-5">🎟️ Промокоди</h2>
+<div class="bg-white rounded-xl shadow p-6 mb-5"><form method="POST" action="{{ url_for('admin_add_promo') }}" class="flex flex-wrap gap-3 items-end">
+<label>Код<input name="code" required maxlength="30" placeholder="HOOKME10" class="block border rounded-lg p-3"></label>
+<label>Знижка, %<input name="discount" type="number" min="1" max="90" required class="block border rounded-lg p-3"></label>
+<button class="bg-[#183d32] text-white px-5 py-3 rounded-lg">Створити промокод</button>
+</form></div>
+{% for promo in promos %}<div class="bg-white rounded-xl shadow p-4 mb-3 flex flex-wrap items-center justify-between gap-3"><p><strong>{{ promo.code }}</strong> — {{ promo.discount }}%</p><form method="POST" action="{{ url_for('admin_delete_promo', promo_id=promo.id) }}" onsubmit="return confirm('Видалити промокод?')"><button class="bg-red-600 text-white px-4 py-2 rounded-lg">Видалити</button></form></div>{% endfor %}
+</section>
+</section>
+
+{% endblock %}
+

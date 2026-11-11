@@ -1,0 +1,328 @@
+
+{% extends "base.html" %}
+
+{% block title %}Про нас | HookMe{% endblock %}
+
+{% block content %}
+
+<!-- ПРО МАГАЗИН -->
+<section class="bg-[#f7f7f2] py-12 md:py-16">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <div class="grid grid-cols-1 lg:grid-cols-2
+                    gap-10 lg:gap-14 items-center">
+
+            <!-- Текст -->
+            <div>
+
+                <p class="text-[#c4943c] uppercase
+                          tracking-[0.2em] font-bold text-sm mb-4">
+                    Знайомство з HookMe
+                </p>
+
+                <h1 class="text-4xl md:text-5xl
+                           font-extrabold text-[#102b24]
+                           leading-tight mb-6">
+                    Про наш магазин
+                </h1>
+
+                <p class="text-lg text-gray-700
+                          leading-relaxed mb-8">
+                    <strong class="text-[#183d32]">HookMe</strong> —
+                    спеціалізований риболовний магазин для тих,
+                    хто захоплюється ловлею хижої риби.
+                    Ми допомагаємо підібрати якісне та надійне
+                    спорядження для ловлі щуки, окуня,
+                    судака та інших хижаків.
+                </p>
+
+                <!-- Переваги -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+
+                    <div>
+                        <div class="text-2xl mb-2">🎣</div>
+                        <h3 class="font-bold text-[#183d32] text-sm mb-1">
+                            Якісне спорядження
+                        </h3>
+                        <p class="text-xs text-gray-600">
+                            Товари для риболовлі на хижака
+                        </p>
+                    </div>
+
+                    <div>
+                        <div class="text-2xl mb-2">💬</div>
+                        <h3 class="font-bold text-[#183d32] text-sm mb-1">
+                            Консультації
+                        </h3>
+                        <p class="text-xs text-gray-600">
+                            Допоможемо з вибором
+                        </p>
+                    </div>
+
+                    <div>
+                        <div class="text-2xl mb-2">🚚</div>
+                        <h3 class="font-bold text-[#183d32] text-sm mb-1">
+                            Доставка
+                        </h3>
+                        <p class="text-xs text-gray-600">
+                            По всій Україні
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Фото щуки -->
+            <div class="rounded-2xl overflow-hidden
+                        shadow-xl h-72 sm:h-96 lg:h-[420px]">
+
+                <img
+                    src="{{ url_for('static', filename='images/pike-banner.jpg') }}"
+                    alt="Щука атакує риболовну приманку"
+                    class="w-full h-full object-cover object-center"
+                >
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- АСОРТИМЕНТ -->
+<section class="bg-white py-12 md:py-16">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <div class="grid grid-cols-1 lg:grid-cols-2
+                    gap-10 lg:gap-14 items-center">
+
+            <!-- Фото окуня -->
+            <div class="rounded-2xl overflow-hidden
+                        shadow-xl h-72 sm:h-96 lg:h-[420px]">
+
+                <img
+                    src="{{ url_for('static', filename='images/perch-attack.png') }}"
+                    alt="Окунь атакує воблер під водою"
+                    class="w-full h-full object-cover object-center"
+                    loading="lazy"
+                >
+
+            </div>
+
+            <!-- Текст -->
+            <div>
+
+                <p class="text-[#c4943c] uppercase
+                          tracking-[0.2em] font-bold text-sm mb-4">
+                    Все для риболовлі на хижака
+                </p>
+
+                <h2 class="text-3xl md:text-4xl
+                           font-extrabold text-[#102b24]
+                           leading-tight mb-6">
+                    Широкий асортимент
+                    для справжніх рибалок
+                </h2>
+
+                <p class="text-gray-700 leading-relaxed mb-5">
+                    Ми створили HookMe для рибалок, які цінують
+                    якісне спорядження, комфорт та незабутні
+                    емоції від кожної риболовлі.
+                </p>
+
+                <p class="text-gray-700 leading-relaxed mb-5">
+                    У нашому магазині ви знайдете спінінгові
+                    вудилища, котушки, силіконові приманки,
+                    блешні, воблери, гачки та різноманітні
+                    аксесуари.
+                </p>
+
+                <p class="text-gray-700 leading-relaxed mb-7">
+                    Незалежно від того, чи ви тільки починаєте
+                    знайомство зі спінінговою риболовлею,
+                    чи вже маєте багаторічний досвід,
+                    у нас знайдеться спорядження для ваших потреб.
+                </p>
+
+                <a href="{{ url_for('catalog') }}"
+                   class="inline-flex items-center gap-3
+                          text-[#183d32] font-bold
+                          hover:text-[#c4943c] transition">
+                    Переглянути каталог
+                    <span aria-hidden="true">→</span>
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- КОНСУЛЬТАЦІЇ -->
+<section class="bg-[#f7f7f2] py-10 md:py-14">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <div class="bg-[#102b24] rounded-2xl
+                    px-7 py-10 md:px-12 md:py-12
+                    shadow-lg">
+
+            <div class="grid grid-cols-1 lg:grid-cols-2
+                        gap-10 lg:gap-14 items-center">
+
+                <!-- Ліва частина -->
+                <div>
+
+                    <p class="text-[#e4b85d] uppercase
+                              tracking-[0.2em] font-bold
+                              text-xs sm:text-sm mb-4">
+                        Ми завжди на зв'язку
+                    </p>
+
+                    <h2 class="text-3xl md:text-4xl
+                               font-extrabold text-white
+                               leading-tight mb-6">
+                        Потрібна допомога
+                        з вибором?
+                    </h2>
+
+                    <p class="text-gray-200 leading-relaxed mb-5">
+                        Наша команда завжди готова відповісти
+                        на ваші запитання та надати консультацію
+                        з будь-яких питань, пов'язаних
+                        із риболовлею на хижу рибу.
+                    </p>
+
+                    <p class="text-gray-300 leading-relaxed">
+                        Ми допоможемо підібрати спорядження
+                        відповідно до вашого досвіду,
+                        стилю риболовлі та бюджету.
+                    </p>
+
+                </div>
+
+                <!-- Права частина -->
+                <div class="lg:border-l lg:border-[#e4b85d]/40
+                            lg:pl-10">
+
+                    <h3 class="text-white font-bold text-lg mb-6">
+                        З якими питаннями ми допоможемо?
+                    </h3>
+
+                    <div class="space-y-5 mb-8">
+
+                        <div class="flex items-start gap-4">
+                            <span class="flex items-center justify-center
+                                         w-10 h-10 rounded-full
+                                         bg-[#e4b85d] text-[#102b24]
+                                         shrink-0 font-bold">
+                                ?
+                            </span>
+
+                            <p class="text-gray-200 pt-2">
+                                Який спінінг обрати для щуки,
+                                окуня чи судака?
+                            </p>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <span class="flex items-center justify-center
+                                         w-10 h-10 rounded-full
+                                         bg-[#e4b85d] text-[#102b24]
+                                         shrink-0">
+                                🎣
+                            </span>
+
+                            <p class="text-gray-200 pt-2">
+                                Які приманки найкраще підійдуть
+                                для конкретних умов ловлі?
+                            </p>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <span class="flex items-center justify-center
+                                         w-10 h-10 rounded-full
+                                         bg-[#e4b85d] text-[#102b24]
+                                         shrink-0">
+                                ⚙
+                            </span>
+
+                            <p class="text-gray-200 pt-2">
+                                Як правильно підібрати котушку,
+                                шнур та оснащення?
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <a href="{{ url_for('contact') }}"
+                       class="inline-flex items-center
+                              justify-center gap-3
+                              bg-[#e4b85d] text-[#102b24]
+                              px-7 py-3 rounded-xl font-bold
+                              hover:bg-[#f3ca75]
+                              transition duration-300">
+                        Зв'язатися з нами
+                        <span aria-hidden="true">→</span>
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ЗАВЕРШАЛЬНИЙ БЛОК -->
+<section class="bg-white py-14 md:py-20">
+
+    <div class="max-w-4xl mx-auto px-6 text-center">
+
+        <h2 class="text-2xl md:text-4xl
+                   font-extrabold text-[#102b24]
+                   leading-tight mb-6">
+            HookMe — твій надійний партнер
+            на риболовлі
+        </h2>
+
+        <p class="text-gray-600 text-base md:text-lg
+                  leading-relaxed mb-8">
+            Для нас риболовля — це більше, ніж просто хобі.
+            Це можливість відпочити, отримати нові враження
+            та відчути азарт від кожного клювання.
+            Ми хочемо, щоб кожна ваша риболовля приносила
+            задоволення, а правильно підібране спорядження
+            допомагало досягати нових результатів.
+        </p>
+
+        <div class="flex items-center justify-center gap-4">
+
+            <span class="h-px w-10 md:w-20 bg-[#c4943c]"></span>
+
+            <p class="text-[#c4943c] uppercase
+                      tracking-[0.15em] font-extrabold
+                      text-sm md:text-lg">
+                Твій улов починається тут!
+            </p>
+
+            <span class="h-px w-10 md:w-20 bg-[#c4943c]"></span>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

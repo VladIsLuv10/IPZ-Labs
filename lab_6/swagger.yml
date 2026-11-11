@@ -1,0 +1,354 @@
+
+swagger: "2.0"
+
+info:
+  title: HookMe REST API
+  description: |
+    Документація REST API інтернет-магазину рибальських товарів HookMe.
+
+    API підтримує перегляд, пошук, створення,
+    редагування та видалення товарів.
+
+    Для POST, PUT і DELETE потрібна авторизована
+    сесія адміністратора HookMe.
+  version: "1.0.0"
+
+basePath: /
+
+schemes:
+  - http
+
+consumes:
+  - application/json
+
+produces:
+  - application/json
+
+tags:
+  - name: System
+    description: Перевірка роботи API
+  - name: Products
+    description: Операції з товарами
+  - name: Categories
+    description: Категорії товарів
+  - name: API v2
+    description: Друга версія API
+
+securityDefinitions:
+  adminSession:
+    type: apiKey
+    in: header
+    name: Cookie
+    description: |
+      Flask session cookie адміністратора.
+      Для локального тестування увійдіть через /admin/login
+      у тому самому браузері.
+
+definitions:
+  Product:
+    type: object
+    required:
+      - name
+      - category
+      - price
+      - image
+      - description
+    properties:
+      id:
+        type: integer
+        example: 1
+        readOnly: true
+      name:
+        type: string
+        example: Спінінгове вудилище BlackFire
+      category:
+        type: string
+        enum:
+          - Вудилища
+          - Котушки
+          - Приманки
+          - Гачки
+          - Аксесуари
+      price:
+        type: integer
+        minimum: 0
+        example: 1850
+      image:
+        type: string
+        example: rods.jpg
+      description:
+        type: string
+        example: Легке вудилище для спінінгової риболовлі.
+
+  ProductInput:
+    type: object
+    required:
+      - name
+      - category
+      - price
+      - image
+      - description
+    properties:
+      name:
+        type: string
+        maxLength: 200
+        example: Спінінгове вудилище BlackFire
+      category:
+        type: string
+        enum:
+          - Вудилища
+          - Котушки
+          - Приманки
+          - Гачки
+          - Аксесуари
+      price:
+        type: integer
+        minimum: 0
+        example: 1850
+      image:
+        type: string
+        maxLength: 255
+        example: rods.jpg
+      description:
+        type: string
+        maxLength: 3000
+        example: Легке вудилище для спінінгової риболовлі.
+
+  Error:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: false
+      error:
+        type: string
+        example: Товар не знайдено.
+
+  Success:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: true
+      message:
+        type: string
+        example: Операцію виконано успішно.
+
+paths:
+
+  /api/v1/test:
+    get:
+      tags:
+        - System
+      summary: Перевірка роботи API
+      responses:
+        200:
+          description: API працює
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+                example: HookMe REST API працює!
+              version:
+                type: string
+                example: "1.0"
+
+  /api/v1/products:
+    get:
+      tags:
+        - Products
+      summary: Отримати список товарів
+      description: Підтримує фільтрацію, пошук та сортування.
+      parameters:
+        - name: category
+          in: query
+          type: string
+          required: false
+          description: Категорія товару
+        - name: search
+          in: query
+          type: string
+          required: false
+          description: Пошук за назвою
+        - name: sort
+          in: query
+          type: string
+          required: false
+          enum:
+            - price_asc
+            - price_desc
+          description: Сортування за ціною
+      responses:
+        200:
+          description: Список товарів
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Product"
+
+    post:
+      tags:
+        - Products
+      summary: Додати новий товар
+      description: Доступно лише авторизованому адміністратору.
+      security:
+        - adminSession: []
+      parameters:
+        - in: body
+          name: product
+          required: true
+          schema:
+            $ref: "#/definitions/ProductInput"
+      responses:
+        201:
+          description: Товар створено
+          schema:
+            $ref: "#/definitions/Success"
+        400:
+          description: Некоректні дані
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: Потрібна авторизація
+          schema:
+            $ref: "#/definitions/Error"
+        415:
+          description: Очікується JSON
+          schema:
+            $ref: "#/definitions/Error"
+
+  /api/v1/products/{product_id}:
+    parameters:
+      - name: product_id
+        in: path
+        type: integer
+        required: true
+        description: Ідентифікатор товару
+
+    get:
+      tags:
+        - Products
+      summary: Отримати товар за ID
+      responses:
+        200:
+          description: Дані товару
+          schema:
+            $ref: "#/definitions/Product"
+        404:
+          description: Товар не знайдено
+          schema:
+            $ref: "#/definitions/Error"
+
+    put:
+      tags:
+        - Products
+      summary: Оновити товар
+      description: Потрібна сесія адміністратора.
+      security:
+        - adminSession: []
+      parameters:
+        - in: body
+          name: product
+          required: true
+          schema:
+            $ref: "#/definitions/ProductInput"
+      responses:
+        200:
+          description: Товар оновлено
+          schema:
+            $ref: "#/definitions/Success"
+        400:
+          description: Некоректні дані
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: Потрібна авторизація
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Товар не знайдено
+          schema:
+            $ref: "#/definitions/Error"
+        415:
+          description: Очікується JSON
+          schema:
+            $ref: "#/definitions/Error"
+
+    delete:
+      tags:
+        - Products
+      summary: Видалити товар
+      description: |
+        Потрібна сесія адміністратора.
+        Товар, який використовується в замовленні,
+        видалити неможливо.
+      security:
+        - adminSession: []
+      responses:
+        200:
+          description: Товар видалено
+          schema:
+            $ref: "#/definitions/Success"
+        401:
+          description: Потрібна авторизація
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: Товар не знайдено
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: Товар використовується в замовленні
+          schema:
+            $ref: "#/definitions/Error"
+
+  /api/v1/categories:
+    get:
+      tags:
+        - Categories
+      summary: Отримати категорії товарів
+      responses:
+        200:
+          description: Список категорій
+          schema:
+            type: array
+            items:
+              type: string
+            example:
+              - Вудилища
+              - Котушки
+              - Приманки
+              - Гачки
+              - Аксесуари
+
+  /api/v2/products:
+    get:
+      tags:
+        - API v2
+      summary: Отримати товари через API v2
+      description: |
+        На відміну від v1, відповідь містить
+        статус, версію, кількість і масив товарів.
+      responses:
+        200:
+          description: Розширена відповідь
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              version:
+                type: string
+                example: "2.0"
+              count:
+                type: integer
+                example: 6
+              data:
+                type: array
+                items:
+                  $ref: "#/definitions/Product"
